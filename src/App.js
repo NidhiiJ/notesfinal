@@ -6,32 +6,35 @@ import Main from "./Main.js";
 
 function App() {
  //understand why we used localStorage as initial value and parsed it 
-  const [notes, setNotes] = useState(JSON.parse(localStorage.notes) || []);
-
-  const [activeNote, setActiveNote] = useState(false);
-
-  //  console.log(activeNote)
-
-  //study useEffect and localStorage
-  useEffect(() => {
-    
-    localStorage.setItem("notes" , JSON.stringify(notes));
-  }, [notes]);
   
+  const savedNotes = window.localStorage.notes;
+  const initialNotes = savedNotes ? JSON.parse(savedNotes) : [];
+  const [notes, setNotes] = useState(initialNotes);
 
+  const [activeNote, setActiveNote] = useState(undefined);
+
+  // study useEffect and localStorage
+  useEffect(() => {
+    window.localStorage.setItem("notes" , JSON.stringify(notes));
+  }, [notes]);
+
+
+  // Used to create a new note with some default values
   const onAddNote = () => {
+    // --> Creating a default note
     const newNote = {
       id: uuid(),
       title: "Untitled Note",
-      body: "this is the body",
+      body: "This is the body",
       lastModified: Date.now(),
     };
 
-    // console.log({ newNote });
+    // Saving this default note to the notes array
     setNotes([newNote, ...notes]);
-    // console.log({ notes });
+    setActiveNote(newNote.id)
   };
 
+  // Used to delete the note by noteID
   const onUpdateNote = (updatedNote) => {
     const updatedNotesArray = notes.map((note) => {
       if (note.id === activeNote) {
@@ -44,26 +47,35 @@ function App() {
     setNotes(updatedNotesArray);
   };
 
+  // --> Used to delete the note by noteID
   const onDeleteNote = (idToDelete) => {
     setNotes(notes.filter((note) => note.id !== idToDelete));
   };
 
+  // --> Used to return the current active note by noteID
   const getActiveNote = () => {
     return notes.find((note) => note.id === activeNote);
   };
 
+  // const onClickOutSide = () => {
+  //   // console.log("Clicked outside")
+  //   setActiveNote(null)
+  // }
+
   return (
     <div className="App">
+      {/* Sidebar: Left side */}
       <Sidebar
         notes={notes}
         onAddNote={onAddNote}
         onDeleteNote={onDeleteNote}
         activeNote={activeNote}
         setActiveNote={setActiveNote}
+        
       />
-
-      {/* we use () to call the function there itself */}
-      <Main activeNote={getActiveNote()} onUpdateNote={onUpdateNote} />
+      
+      {/* Main: Right side */}
+      <Main setActiveNote={setActiveNote} activeNote={getActiveNote()} onUpdateNote={onUpdateNote} />
     </div>
   );
 }

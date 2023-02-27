@@ -1,7 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
-export default function Main({ activeNote, onUpdateNote }) {
+export default function Main({ setActiveNote, activeNote, onUpdateNote }) {
   const onEditField = (key, value) => {
     onUpdateNote({
       ...activeNote,
@@ -10,7 +10,7 @@ export default function Main({ activeNote, onUpdateNote }) {
     });
   };
 
-  if (!activeNote || activeNote == false)
+  if (!activeNote)
     return <div className="no-active-note">No note selected</div>;
 
   return (
@@ -22,8 +22,6 @@ export default function Main({ activeNote, onUpdateNote }) {
           placeholder="Note Title"
           autoFocus
           value={activeNote.title}
-
-          //learn abt event listeners 
           onChange={(e) => onEditField("title", e.target.value)}
           onClick={() => console.log(activeNote)}
         />

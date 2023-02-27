@@ -1,29 +1,30 @@
 import {React,useRef, useEffect} from "react";
 
+
 export default function Sidebar({
   notes,
   onAddNote,
   onDeleteNote,
   activeNote,
   setActiveNote,
+  
 }) {
   const sortedNotes = notes.sort((a,b)=> b.lastModified - a.lastModified)
   const noteref = useRef()
-
   const handleClickOutside = (e) =>{
-    if(noteref.current && !noteref.current.contains(e.target)){
+    if(!noteref.current.contains(e.target)){
       setActiveNote(false);
+      console.log(activeNote)
     }
   }
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside, true);
   
-    return () => {
-      document.removeEventListener("click", handleClickOutside, true);
-    }
-  }, [])
-  
+    // return () => {
+    //   document.removeEventListener("click", handleClickOutside, true);
+    // }
+  })
 
   return (
     <div className="app-sidebar">
@@ -31,18 +32,23 @@ export default function Sidebar({
         <h1>Notes</h1>
         <button onClick={onAddNote}>Add</button>
       </div>
+      
+      
       <div className="app-sidebar-notes">
+      
         {sortedNotes.map((note) => {
           return (
-            <div ref={noteref}
+            <div
               className={`app-sidebar-note ${
                 note.id === activeNote && "active"
               }`}
               onClick={() => {
                 setActiveNote(note.id)
-                // console.log(activeNote)
+                console.log(note.id);
               }}
+              ref={noteref}
             >
+              
               <div className="sidebar-note-title">
                 <strong>{note.title}</strong>
 
